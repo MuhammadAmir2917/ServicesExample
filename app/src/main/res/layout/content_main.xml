@@ -10,11 +10,24 @@
         tools:showIn="@layout/activity_main"
         tools:context=".MainActivity">
 
-<Button
-        android:text="Start Intent Service"
-        android:id="@+id/btnIntentService"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="Start Work Request"
+            android:id="@+id/btnWorkRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    <TextView
+            android:id="@+id/tv_work_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="Start Intent Service"
+            android:id="@+id/btnIntentService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     <Button
             android:text="Start Intent Service"
@@ -26,6 +39,6 @@
     <TextView
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
-              android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"/>
 
 </LinearLayout>
