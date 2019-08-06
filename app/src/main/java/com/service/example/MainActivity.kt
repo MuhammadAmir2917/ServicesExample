@@ -6,11 +6,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.content.ContextCompat
+import com.service.example.eventbus.Events
+import com.service.example.eventbus.GlobalBus
 import com.service.example.services.CounterService
 import com.service.example.services.ForegroundService
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.greenrobot.eventbus.Subscribe
+
 /*
 *
 * Created By Muhammad Amir
@@ -52,5 +56,20 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    @Subscribe
+    fun events(event : Events.ServiceToActivity){
+        tv_message.text = event.message
+    }
+
+    override fun onStart() {
+        super.onStart()
+        GlobalBus.invoke().register(this)
+    }
+
+    override fun onDestroy() {
+        GlobalBus.invoke().unregister(this)
+        super.onDestroy()
     }
 }

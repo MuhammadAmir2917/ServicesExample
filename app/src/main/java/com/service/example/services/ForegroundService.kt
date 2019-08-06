@@ -12,6 +12,8 @@ import com.service.example.MainActivity
 import com.service.example.R
 import com.service.example.toast
 import android.media.session.PlaybackState.ACTION_PLAY
+import com.service.example.eventbus.Events
+import com.service.example.eventbus.GlobalBus
 
 
 /*
@@ -54,6 +56,8 @@ class ForegroundService : Service(){
                 }
 
                 ACTION_PLAY->{
+                    val event = Events.ServiceToActivity("Message from service to activity")
+                    GlobalBus.invoke().post(event)
                     toast("Play Clicked")
                 }
             }
