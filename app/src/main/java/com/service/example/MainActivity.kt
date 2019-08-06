@@ -1,5 +1,10 @@
 package com.service.example
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +17,7 @@ import com.service.example.eventbus.Events
 import com.service.example.eventbus.GlobalBus
 import com.service.example.services.CounterService
 import com.service.example.services.ForegroundService
+import com.service.example.services.TestJobService
 import com.service.example.workmanagers.NotificationWorker
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var workManager: WorkManager
 
-    companion object{
+    companion object {
         const val MESSAGE_STATUS = "message_status"
     }
 
@@ -37,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         //WorkManager instance
         workManager = WorkManager.getInstance()
 
-       //create OneTimeWorkRequest, because I want to create a task that will be executed just once , it will execute when network is connected
+        //create OneTimeWorkRequest, because I want to create a task that will be executed just once , it will execute when network is connected
         val mRequest = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build()
 
@@ -49,46 +55,58 @@ class MainActivity : AppCompatActivity() {
 
         btnIntentService.setOnClickListener {
             val intent = App.instance.getCounterServiceIntent()
-            intent.putExtra(CounterService.EXTRA_MAX_COUNT , 100)
+            intent.putExtra(CounterService.EXTRA_MAX_COUNT, 100)
             App.instance.startService(intent)
         }
 
 
         btnStartForegroundService.setOnClickListener {
             val intent = App.instance.getForegroundServiceIntent()
-            intent.putExtra(ForegroundService.EXTRA_INPUT , "Foreground Service example in kotlin")
+            intent.putExtra(ForegroundService.EXTRA_INPUT, "Foreground Service example in kotlin")
             intent.action = ForegroundService.ACTION_START_FOREGROUND_SERVICE
-             App.instance.startService(intent)
+            App.instance.startService(intent)
         }
 
         btnWorkRequest.setOnClickListener {
             //Enqueue the request with WorkManager
-           workManager.enqueue(mRequest)
+            workManager.enqueue(mRequest)
         }
 
 
         //Fetch the particular task status
-        workManager.getWorkInfoByIdLiveData(mRequest.id).observe(this ,
+        workManager.getWorkInfoByIdLiveData(mRequest.id).observe(this,
             Observer<WorkInfo> { workInfo ->
                 val state = workInfo?.state
                 tv_work_status.append("$state \n")
             })
+
+        btnJobService.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val jobScheduler = applicationContext.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                val componentName = ComponentName(applicationContext, TestJobService::class.java)
+                val jobInfo  = JobInfo.Builder(1, componentName).setOverrideDeadline(10)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).setRequiresCharging(true).build()
+                jobScheduler.schedule(jobInfo)
+            }
+        }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-          menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-          return when (item.itemId) {
+        return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     @Subscribe
-    fun events(event : Events.ServiceToActivity){
+    fun events(event: Events.ServiceToActivity) {
         tv_message.text = event.message
     }
 

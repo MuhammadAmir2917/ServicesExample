@@ -26,7 +26,12 @@
 
         <service android:name=".services.ForegroundService"
                  android:enabled="true"
-                 android:exported="true"/>
+                 android:exported="false"/>
+
+        <service android:name=".services.TestJobService"
+                 android:exported="true"
+                 android:permission="android.permission.BIND_JOB_SERVICE"/>
+
         <receiver android:name=".receivers.BootCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

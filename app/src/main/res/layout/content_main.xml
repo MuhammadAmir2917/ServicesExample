@@ -10,6 +10,12 @@
         tools:showIn="@layout/activity_main"
         tools:context=".MainActivity">
 
+    <Button
+            android:text="Start Job Service"
+            android:id="@+id/btnJobService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 
     <Button
             android:text="Start Work Request"
